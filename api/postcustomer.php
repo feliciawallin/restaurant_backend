@@ -1,27 +1,28 @@
 <?php
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Method: *");
-header("Content-Type:application/json");
+header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Max-Age: 3600");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-// if (($_GET['customerID']) && $_GET['customerID']!="") {
     include('../dbconnection.php');
 
-    //$customerID = $_GET['customerID'];
+    $inputJSON = file_get_contents('php://input');
+
+    $input = json_decode($inputJSON);
+
+    $name = $input->customerName;
+    $email = $input->customerEmail;
+    $phone = $input->customerPhone;
 
     $statement = $pdo->prepare(
-        "INSERT INTO customer (customer_name, customer_phone, customer_email) 
-         VALUES (:customerName, :customerPhone, :customerEmail)"
+        "INSERT INTO Customer (Name, Phone, Email) 
+         VALUES (:name, :phone, :email)"
     );
 
     $statement->execute([
-        ":customer_name"    => $_POST["customerName"],
-        ":customer_phone"     => $_POST["customerPhone"],
-        ":customer_email"     => $_POST["customerEmail"],
-    ]);
-   
-// }else{
-   // response(NULL);
-    //}
-    
-    echo json_encode(["message" => "It works"]);
+        ":name"    => $name,
+        ":phone"     => $phone,
+        ":email"     => $email,
+    ]);     
 ?>
