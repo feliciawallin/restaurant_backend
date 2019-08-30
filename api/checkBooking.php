@@ -4,11 +4,9 @@ header("Content-Type:application/json");
 
     include('../dbconnection.php');
 
-    $inputJSON = file_get_contents('php://input');
-
-    $input = json_decode($inputJSON);
-    $date = $input->date;
-    $time = $input->time;
+    $date = $_GET["bookingDate"];
+    $time = $_GET["bookingTime"];
+    $numberOfGuests = $_GET["bookingNumberOfGuests"];
 
     $statement = $pdo->prepare("SELECT `Date` FROM `Reservation` WHERE Date = $date AND Time = $time");
     $statement->execute();
