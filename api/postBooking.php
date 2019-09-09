@@ -3,16 +3,22 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type:application/json");
 
     include('../dbconnection.php');
+
     $inputJSON = file_get_contents('php://input');
     $input = json_decode($inputJSON);
+ 
 
     $date = $input->bookingDate;
-    $guests = $input->bookingNumberOfGuests;
+    $guests = $input->bookingGuests;
     $time = $input->bookingTime;
 
     $name = $input->bookingName;
     $email = $input->bookingEmail;
     $phone = $input->bookingPhone;
+    // $bookingId = $input->bookingID;
+
+    //    echo("starts");
+    // echo($input);
 
     if (isset($email)) {
 
@@ -58,7 +64,7 @@ header("Content-Type:application/json");
             $newCustomer = $statement->fetch(PDO::FETCH_OBJ);
 
             $statement = $pdo->prepare(
-                "INSERT INTO Reservations (Date, Time, CustomerID, Guests) VALUES (:date, :time, :customerID, :guests)");
+                "INSERT INTO Reservation (Date, Time, CustomerID, Guests) VALUES (:date, :time, :customerID, :guests)");
 
             $statement->execute([
                 ":date"    => $date,
