@@ -1,34 +1,31 @@
 <?php
 header("Access-Control-Allow-Origin: *");
 header("Content-Type:application/json");
+header("Access-Control-Allow-Methods: *");
 
     include('../dbconnection.php');
 
     $inputJSON = file_get_contents('php://input');
     $input = json_decode($inputJSON);
- 
+
+    // echo($input);
 
     $date = $input->bookingDate;
     $guests = $input->bookingGuests;
     $time = $input->bookingTime;
-
     $name = $input->bookingName;
     $email = $input->bookingEmail;
     $phone = $input->bookingPhone;
-    // $bookingId = $input->bookingID;
 
-    //    echo("starts");
-    // echo($input);
-
-    if (isset($email)) {
-
+    // if (isset($email)) {
+        // echo("hej");
+        
         $statement = $pdo->prepare(
             "SELECT `CustomerID` FROM `Customer` WHERE `Email` = '$email'"
         );
 
         $statement->execute();
         $customer = $statement->fetch(PDO::FETCH_OBJ);
-
         $customerId = $customer->CustomerID;
 
         if($customerId > 0) {
@@ -45,7 +42,6 @@ header("Content-Type:application/json");
             ]);
 
         } else {
-
             $statement = $pdo->prepare(
                 "INSERT INTO Customer (Name, Phone, Email) VALUES (:name, :phone, :email)");
 
@@ -55,7 +51,8 @@ header("Content-Type:application/json");
                 ":email" => $email
             ]);
 
-            $lastCustomerID = $newCustomer->latestInsertId();
+            $lastCustomerID = $pdo->lastInsertId();
+    
             $statement = $pdo->prepare(
                 "SELECT `CustomerID` FROM `Customer` WHERE `CustomerID` = '$lastCustomerID'"
             );
@@ -64,16 +61,16 @@ header("Content-Type:application/json");
             $newCustomer = $statement->fetch(PDO::FETCH_OBJ);
 
             $statement = $pdo->prepare(
-                "INSERT INTO Reservation (Date, Time, CustomerID, Guests) VALUES (:date, :time, :customerID, :guests)");
+                "INSERT INTO Reservation (Date, Time, CustomerID, Guests) VALUES (:date, :time, :customerid, :guests)");
 
             $statement->execute([
                 ":date"    => $date,
                 ":time" => $time,
                 ":guests" => $guests,
-                "customerID" => $newCustomer
+                ":customerid" => $lastCustomerID
             ]);
         }
-    }
+    // }
 
 
     $msg = "First line of text\nSecond line of text";
