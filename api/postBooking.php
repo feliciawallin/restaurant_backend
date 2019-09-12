@@ -72,12 +72,19 @@ header("Access-Control-Allow-Methods: *");
         }
     // }
 
+    $header .= 'From: nonameresturant@info.se';
 
-    $msg = "First line of text\nSecond line of text";
+    $msg = "
+        Thank you for your reservation $name \n 
+        Details
+        Date: $date,
+        Time: $time,
+        Number of guests: $guests
+    ";
     // use wordwrap() if lines are longer than 70 characters
     $msg = wordwrap($msg,70);
     // send email
-    mail("jakob@edeus.se","My subject",$msg);
+    mail($email,$name,$msg, $header);
     
     
 ?>
